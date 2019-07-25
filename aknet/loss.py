@@ -7,6 +7,13 @@ class Loss:
     def grad(self, predicted: Tensor, actual: Tensor) -> Tensor:
         raise NotImplementedError
 
+class MSE(Loss):
+    def loss(self, predicted: Tensor, actual: Tensor) -> float:
+        return np.sum((predicted - actual) ** 2)
+
+    def grad(self, predicted: Tensor, actual: Tensor) -> Tensor:
+        return 2 * (predicted - actual)
+
 class CrossEntropy(Loss):
     def loss(self, predicted: Tensor, actual: Tensor) -> float:
         idx: int = np.argmax(actual)

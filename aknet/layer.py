@@ -16,11 +16,11 @@ class Layer:
         raise NotImplementedError   
 class LinearLayer(Layer):
     def __init__(self, inputSize, outputSize) -> None:
-        super.__init__()
+        super().__init__()
         self.params["weights"] = np.random.rand(outputSize,inputSize) 
         self.params["bias"] = np.random.rand(outputSize)
         self.grads["biasGrad"] = np.zeros((outputSize)) 
-        self.grads["weightGrad"] = np.zeros((outputSize,inputSize)) 
+        self.grads["weightsGrad"] = np.zeros((outputSize,inputSize)) 
     def forward(self, input: Tensor) -> Tensor:
         self.input = input
         return (self.params["weights"] @ input) + self.params["bias"]
@@ -28,11 +28,12 @@ class LinearLayer(Layer):
         self.grads["biasGrad"] += inputGrad
         deltaMatr: Tensor = np.column_stack(np.tile(inputGrad,(self.input.size,1))) 
         activGrad: Tensor = np.tile(self.input,(inputGrad.size,1)) 
-        self.grads["weightGrad"] += deltaMatr * activGrad
-        return self.params["w"].T @ inputGrad
+        self.grads["weightsGrad"] += deltaMatr * activGrad
+        return self.params["weights"].T @ inputGrad
 
 class ActivationLayer(Layer):
     def __init__(self, f: Callable[[Tensor], Tensor], fPrime: Callable[[Tensor], Tensor]) -> None:
+        super().__init__()
         self.f = f
         self.fPrime = f
     def forward(self,input: Tensor) -> Tensor:
@@ -46,11 +47,23 @@ class ActivationLayer(Layer):
 
 class Sigmoid(ActivationLayer):
     def __init__(self) -> None:
-        super.__init__(sigmoid,sigmoidPrime)
+        super().__init__(sigmoid,sigmoidPrime)
 
 class Softmax(ActivationLayer):
     def __init__(self) -> None:
-        super.__init__(softmax,softmaxPrime)
+        super().__init__(softmax,softmaxPrime)
+
+class Relu(ActivationLayer):
+    def __init__(self) -> None:
+        super().__init__(relu,reluPrime)
+class Tanh(ActivationLayer):
+    def __init__(self) -> None:
+        super().__init__(tanh,tanhPrime)
+def tanh(x: Tensor) -> Tensor:
+    return np.tanh(x)
+
+def tanhPrime(x: Tensor) -> Tensor:
+    return 1. - x * x
 
 def softmax(v: Tensor) -> Tensor:
     exps = np.exp(v)
@@ -68,3 +81,9 @@ def sigmoid(v: Tensor) -> Tensor:
 def sigmoidPrime(v: Tensor) -> Tensor:
     x = sigmoid(v)
     return x * (1-x)
+
+def relu(x: Tensor) -> Tensor:
+    return x * (x > 0)
+
+def reluPrime(x: Tensor) -> Tensor:
+    return 1. * (x > 0)
