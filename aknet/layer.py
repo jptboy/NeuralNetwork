@@ -23,12 +23,15 @@ class LinearLayer(Layer):
         self.grads["weightsGrad"] = np.zeros((outputSize,inputSize)) 
     def forward(self, input: Tensor) -> Tensor:
         self.input = input
+        input = np.clip(input, a_min = -1e64, a_max = 1e64)
         return (self.params["weights"] @ input) + self.params["bias"]
     def backwards(self, inputGrad: Tensor) -> Tensor:
         self.grads["biasGrad"] += inputGrad
         deltaMatr: Tensor = np.column_stack(np.tile(inputGrad,(self.input.size,1))) 
         activGrad: Tensor = np.tile(self.input,(inputGrad.size,1)) 
+        activGrad = np.clip(activGrad,a_min=-1e64,a_max = 1e64)
         self.grads["weightsGrad"] += deltaMatr * activGrad
+        inputGrad = np.clip(inputGrad,a_min=-1e64,a_max = 1e64)
         return self.params["weights"].T @ inputGrad
 
 class ActivationLayer(Layer):
@@ -41,6 +44,7 @@ class ActivationLayer(Layer):
         return self.f(input)
     def backwards(self,grad: Tensor) -> Tensor:
         fPrimeGrad = self.fPrime(self.input) 
+        fPrimeGrad = np.clip(fPrimeGrad,a_min=-1e64,a_max = 1e64)
         if len(np.shape(fPrimeGrad)) > 1:
             return fPrimeGrad @ grad
         return  fPrimeGrad * grad
@@ -66,6 +70,8 @@ def tanhPrime(x: Tensor) -> Tensor:
     return 1. - x * x
 
 def softmax(v: Tensor) -> Tensor:
+    m = np.max(v)
+    v = v - m
     exps = np.exp(v)
     tot = np.sum(exps)
     return exps / tot
@@ -87,3 +93,12 @@ def relu(x: Tensor) -> Tensor:
 
 def reluPrime(x: Tensor) -> Tensor:
     return 1. * (x > 0)
+def leakyrelu(v: Tensor) -> Tensor:
+    return np.where(v > 0, v, v * 0.01) 
+    
+def leakyreluPrime(x: Tensor) -> Tensor:
+    return np.where(v > 0, 1, 0.01) 
+
+class LeakyRelu(ActivationLayer):
+    def __init__(self) -> None:
+        super().__init__(leakyrelu,leakyreluPrime)

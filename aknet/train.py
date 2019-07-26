@@ -24,8 +24,11 @@ def train(net: NeuralNetwork,
                 grad = loss.grad(predicted, Y)
                 net.backwards(grad)
                 optimizer.step(net)
+
         print(epoch, epoch_loss)
         losses.append(epoch_loss)
+        if epoch_loss < 300:
+            break
     if showGraph:
         plt.plot(losses)
         plt.show()

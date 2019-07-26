@@ -7,7 +7,7 @@ import numpy as np
 
 from train import train
 from network import NeuralNetwork
-from layer import LinearLayer, Sigmoid, Relu, Softmax, Tanh
+from layer import LinearLayer, Sigmoid, Relu, Softmax, Tanh, LeakyRelu
 from loss import MSE
 from optimizer import MBGD
 
@@ -26,13 +26,10 @@ targets = np.array([
 ])
 
 net = NeuralNetwork([
-    LinearLayer(inputSize=2, outputSize=60),
-    Tanh(),
-    LinearLayer(inputSize=60, outputSize=60),
-    Tanh(),
-    LinearLayer(inputSize=60, outputSize=60),
-    Tanh(),
-    LinearLayer(inputSize=60, outputSize=2)
+    LinearLayer(inputSize=2, outputSize=2),
+    LeakyRelu(),
+    LinearLayer(inputSize=2, outputSize=2),
+    Tanh()
 ])
 
 train(net, inputs, targets, loss= MSE(), num_epochs=5000, optimizer=MBGD(learningRate=0.01), showGraph=True)
