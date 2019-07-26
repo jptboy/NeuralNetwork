@@ -35,9 +35,9 @@ net = NeuralNetwork([
     LinearLayer(inputSize=60, outputSize=2)
 ])
 
-# train(net, inputs, targets, loss= MSE(), num_epochs=5000, optimizer=MBGD(learningRate=0.01))
+train(net, inputs, targets, loss= MSE(), num_epochs=5000, optimizer=MBGD(learningRate=0.01), showGraph=True)
 
-net.loadParamsFromFile("/home/ayush/scratch/Net/aknet/serialized.json")
+# net.loadParamsFromFile("/home/ayush/scratch/Net/aknet/serialized.json")
 
 for x, y in zip(inputs, targets):
     predicted = net.forward(x)

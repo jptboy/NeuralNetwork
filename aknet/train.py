@@ -1,4 +1,5 @@
 from tensor import Tensor
+from matplotlib import pyplot as plt
 from network import NeuralNetwork
 from loss import CrossEntropy, Loss, MSE
 from optimizer import Optimizer, MBGD
@@ -11,7 +12,9 @@ def train(net: NeuralNetwork,
           num_epochs: int = 5000,
           iterator: DataIterator = BatchIterator(),
           loss: Loss = CrossEntropy(),
-          optimizer: Optimizer = MBGD()) -> None:
+          optimizer: Optimizer = MBGD(),
+          showGraph: bool = False) -> None:
+    losses = []
     for epoch in range(num_epochs):
         epoch_loss = 0.0
         for batch in iterator(inputs, targets):
@@ -22,3 +25,7 @@ def train(net: NeuralNetwork,
                 net.backwards(grad)
                 optimizer.step(net)
         print(epoch, epoch_loss)
+        losses.append(epoch_loss)
+    if showGraph:
+        plt.plot(losses)
+        plt.show()

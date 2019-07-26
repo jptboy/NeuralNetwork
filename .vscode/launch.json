@@ -8,9 +8,9 @@
             "name": "Python: Current File",
             "type": "python",
             "request": "launch",
-            "program": "${workspaceFolder}/aknet/xor.py",
+            "program": "${workspaceFolder}/aknet/mnist.py",
             "console": "integratedTerminal",
-            "cwd": "${workspaceFolder}/aknet/xor.py"
+            "cwd": "${workspaceFolder}/aknet/"
         }
     ]
 }
