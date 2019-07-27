@@ -1,5 +1,6 @@
 # Please open and look at NeuralNetwork.ipynb
-## Also look inside the `aknet/` directory for the implementation of everything
+## Also look inside the `aknet/` directory for the implementations of everything
+  - Network, Layers, Optmizer, Data Iteration, Loss Functions
 
 
 ## Simple neural network to identify 8x8 numbers
