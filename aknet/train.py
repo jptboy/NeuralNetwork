@@ -28,7 +28,7 @@ def train(net: NeuralNetwork,
         print(epoch, epoch_loss)
         losses.append(epoch_loss)
         if epoch_loss < 300:
-            break
+            pass
     if showGraph:
         plt.plot(losses)
         plt.show()

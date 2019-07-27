@@ -43,18 +43,18 @@ for num in digits.target:
     targets.append(baz)
 targets = np.array(targets)
 from sklearn.model_selection import train_test_split
-inputs,xtest,targets, ytest = train_test_split(inputs, targets, test_size = 0.2, random_state = 42)
+inputs,xtest,targets, ytest = train_test_split(inputs, targets, test_size = 0.2)
 
 np.seterr(all='raise')
 net = NeuralNetwork([
-    LinearLayer(inputSize=64, outputSize=128),
+    LinearLayer(inputSize=64, outputSize=16),
     LeakyRelu(),
-    LinearLayer(inputSize=128, outputSize=10),
+    LinearLayer(inputSize=16, outputSize=10),
     LeakyRelu(),
     Softmax()
 ])
 
-train(net, inputs, targets, loss= CrossEntropy(), num_epochs=20000, optimizer=MBGD(learningRate=0.001), showGraph=True)
+train(net, inputs, targets, loss= CrossEntropy(), num_epochs=600, optimizer=MBGD(learningRate=0.0001), showGraph=True)
 
 net.serialize("serializedMNIST.json")
 # net.loadParamsFromFile("/home/ayush/scratch/Net/aknet/serializedMNIST.json")
